@@ -1,0 +1,31 @@
+{
+  "name": "ua-campus-maintenance",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node --watch backend/server.js",
+    "dev:client": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "start": "node backend/server.js",
+    "test": "node --test",
+    "db:create": "node backend/create-database.js",
+    "db:migrate": "node backend/migrate-to-postgres.js",
+    "db:configure": "node backend/configure-postgres.js"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "dotenv": "^18.0.10",
+    "express": "^4.21.2",
+    "lucide-react": "^0.468.0",
+    "pg": "^8.23.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "supertest": "^7.0.0",
+    "vite": "^6.0.7"
+  }
+}
