@@ -1,10 +1,6 @@
-import 'dotenv/config';
 import express from 'express';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { createStore } from './store.js';
-import { createPostgresStore } from './postgres-store.js';
 
 const priorities = ['Low', 'Medium', 'High', 'Urgent'];
 const statuses = ['Requested', 'In progress', 'Scheduled', 'Completed'];
@@ -17,10 +13,7 @@ const seedAccounts = [
   { id: 'USR-STAFF-001', email: 'staff@campuscare.test', password: 'Staff123!', name: 'Lanz Macapagal', role: 'staff' },
 ];
 
-export function createApp({ store } = {}) {
-  store ??= process.env.DATABASE_URL || process.env.USE_POSTGRES === 'true'
-    ? createPostgresStore({ connectionString: process.env.DATABASE_URL })
-    : createStore();
+export function createApp({ store = createStore() } = {}) {
   const app = express();
   const sessions = new Map();
   app.use(express.json({ limit: '14mb' }));
@@ -333,15 +326,6 @@ export function createApp({ store } = {}) {
       } catch (error) {
         next(error);
       }
-    });
-  }
-
-  if (process.env.NODE_ENV === 'production') {
-    const frontendDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../dist');
-    app.use(express.static(frontendDir));
-    app.get('*', (request, response, next) => {
-      if (request.path.startsWith('/api/')) return next();
-      return response.sendFile(path.join(frontendDir, 'index.html'));
     });
   }
 
